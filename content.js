@@ -407,6 +407,8 @@
 (function () {
   console.log("📘 Classroom UI Enhancer loaded with auto-cleanup and reinit.");
 
+  
+
   // -----------------------------------------------------
   // STEP 1 — Generate embedded HTML for supported documents
   // -----------------------------------------------------
@@ -471,7 +473,44 @@
           );
 
           const embedHTML = pptLink ? getDocumentEmbedHTML(pptLink.href) : "";
-          const fullHTML = `<div style="white-space: normal; line-height: 1.6;">${htmlContent}${embedHTML}</div>`;
+
+let topicName = "Untitled Topic";
+
+// Try 1: Check for nearest topic container
+const topicContainer = item.closest('[guidedhelpid="classworkTopicListGh"], [jsname="dTDiAc"]');
+if (topicContainer) {
+  const titleEl = topicContainer.querySelector('.Vu2fZd.Cx437e');
+  if (titleEl && titleEl.innerText.trim()) {
+    topicName = titleEl.innerText.trim();
+  }
+}
+
+// Try 2: Fallback — check if any visible topic name near item
+if (topicName === "Untitled Topic") {
+  const possibleTopic = item.parentElement?.previousElementSibling?.querySelector('.Vu2fZd.Cx437e');
+  if (possibleTopic && possibleTopic.innerText.trim()) {
+    topicName = possibleTopic.innerText.trim();
+  }
+}
+
+console.log("📘 Topic Name:", topicName);
+
+// Create a styled topic header
+const topicHeaderHTML = `
+  <h2 style="
+    font-weight: 600;
+    color: #1967d2;
+    font-size: 20px;
+    margin-bottom: 10px;
+    border-bottom: 2px solid #e8eaed;
+    padding-bottom: 5px;
+  ">
+    ${topicName}
+  </h2>
+`;
+
+          const fullHTML = `<div style="white-space: normal; line-height: 1.6;">${topicHeaderHTML}${htmlContent}${embedHTML}</div>`;
+
 
           try {
             if (policy) panel.innerHTML = policy.createHTML(fullHTML);
