@@ -180,8 +180,232 @@
 
 // v-------------------------7
 
+// (function () {
+//   console.log("📘 Classroom UI Enhancer loaded.");
+
+//   // -----------------------------------------------------
+//   // STEP 1 — Generate embedded HTML for supported documents
+//   // -----------------------------------------------------
+//   function getDocumentEmbedHTML(url) {
+//     if (!url) return "";
+
+//     console.log("🔗 Found attachment URL:", url);
+
+//     // ✅ Google Slides presentation (use full viewer, not embed)
+//     if (url.includes("docs.google.com/presentation")) {
+//       const match = url.match(/\/d\/([^\/]+)\//);
+//       if (match && match[1]) {
+//         const presentationId = match[1];
+//         const viewerURL = `https://docs.google.com/presentation/d/${presentationId}/view?usp=sharing`;
+
+//         console.log("🖼 Google Slides Viewer URL:", viewerURL);
+//         return `
+//           <div class="embedded-document">
+//             <iframe
+//               src="${viewerURL}"
+//               width="100%"
+//               height="480px"
+//               allowfullscreen
+//               onerror="this.parentElement.innerHTML='<p style=color:red>⚠️ Could not load Google Slides. <a href=${url} target=_blank>Open manually</a></p>'">
+//             </iframe>
+           
+//           </div>
+//         `;
+//       }
+//     }
+
+//     // ✅ Google Drive PPTX (works with preview)
+//     if (url.includes("drive.google.com/file/")) {
+//       const match = url.match(/\/d\/([^\/]+)\//);
+//       if (match && match[1]) {
+//         const fileId = match[1];
+//         const previewURL = `https://drive.google.com/file/d/${fileId}/preview`;
+
+//         console.log("📊 Google Drive Preview URL:", previewURL);
+//         return `
+//           <div class="embedded-document">
+//             <iframe
+//               src="${previewURL}"
+//               width="100%"
+//               height="480px"
+//               allowfullscreen
+//               onerror="this.parentElement.innerHTML='<p style=color:red>⚠️ PPT preview failed. <a href=${url} target=_blank>Open in Drive</a></p>'">
+//             </iframe>
+            
+//           </div>
+//         `;
+//       }
+//     }
+
+//     // ✅ PPT/PPTX direct file
+//     if (url.endsWith(".ppt") || url.endsWith(".pptx")) {
+//       console.log("📄 Detected raw PPT file (no embed)");
+//       return `
+//         <p>⚠️ Browser cannot embed .pptx directly.</p>
+//         <p><a href="${url}" target="_blank">📎 Download PowerPoint File</a></p>
+//       `;
+//     }
+
+//     // Fallback
+//     console.warn("⚠️ Unknown document link:", url);
+//     return `<p><a href="${url}" target="_blank">📎 View Attachment</a></p>`;
+//   }
+
+//   // -----------------------------------------------------
+//   // STEP 2 — Observe and attach event handlers
+//   // -----------------------------------------------------
+//   function startObservingListItems(panel) {
+//     console.log("👀 Watching for classwork list items...");
+
+//     let policy = null;
+//     if (window.trustedTypes && trustedTypes.createPolicy) {
+//       policy = trustedTypes.createPolicy("classroomPolicy", { createHTML: (input) => input });
+//     }
+
+//     const attachToListItems = () => {
+//       const listItems = document.querySelectorAll('li[data-stream-item-id]');
+//       if (!listItems.length) {
+//         console.warn("⚠️ No list items found yet.");
+//         return;
+//       }
+
+//       listItems.forEach((item) => {
+//         if (item.dataset.listenerAttached) return;
+//         item.dataset.listenerAttached = "true";
+
+//         item.addEventListener("click", () => {
+//           console.log("🖱 Clicked item:", item.dataset.streamItemId);
+
+//           const contentEl = item.querySelector(".bqKF7d span");
+//           const htmlContent = contentEl ? contentEl.innerHTML.trim() : "<p>No content found.</p>";
+
+//           const pptLink = item.querySelector(
+//             'a[href*=".ppt"], a[href*=".pptx"], a[href*="docs.google.com/presentation"], a[href*="drive.google.com/file"]'
+//           );
+
+//           if (pptLink) {
+//             console.log("📘 Found document link:", pptLink.href);
+//           } else {
+//             console.warn("🚫 No Slides or PPT link found in this item.");
+//           }
+
+//           const embedHTML = pptLink ? getDocumentEmbedHTML(pptLink.href) : "";
+//           const fullHTML = `
+//             <div style="white-space: normal; line-height: 1.6;">
+//               ${htmlContent}
+//               ${embedHTML}
+//             </div>
+//           `;
+
+//           try {
+//             if (policy) panel.innerHTML = policy.createHTML(fullHTML);
+//             else panel.innerHTML = fullHTML;
+//           } catch (err) {
+//             console.error("❌ TrustedHTML error:", err);
+//             panel.innerHTML = `<p>⚠️ Rendering error. Showing raw content.</p>` + fullHTML;
+//           }
+//         });
+//       });
+//     };
+
+//     const observer = new MutationObserver(() => attachToListItems());
+//     observer.observe(document.body, { childList: true, subtree: true });
+
+//     attachToListItems();
+//   }
+
+//   // -----------------------------------------------------
+//   // STEP 3 — Inject CSS (matching native Google Classroom layout)
+//   // -----------------------------------------------------
+//   function injectStyles() {
+//     if (document.getElementById("customStyleEnhancer")) return;
+//     const style = document.createElement("style");
+//     style.id = "customStyleEnhancer";
+//     style.textContent = `
+//       .kdAl3b {
+//         position: absolute !important;
+//         left: 1em !important;
+//         width: 28% !important;
+//         z-index: 1;
+//       }
+//       .JryN0e.jlxRme {
+//         display: inline !important;
+//         width: 25% !important;
+//         position: fixed !important;
+//         bottom: 1em !important;
+//         z-index: 3 !important;
+//       }
+//       .iCujF {
+//         display: block !important;
+//         position: relative !important;
+//         justify-content: center !important;
+//       }
+//       .myCustomWrapper {
+//         // position: fixed;
+//         // top: 11em;
+//         // right: 1em;
+//         // width: 50%;
+//         // height: 70%;
+//         // background: #f9fbff;
+//         // border-radius: 10px;
+//         // box-shadow: 0 0 10px rgba(0,0,0,0.3);
+//         // overflow-y: auto;
+//         // padding: 1em;
+//         // z-index: 19;
+//           padding: 1em !important;
+//         position: fixed !important;
+//         background-color: #f9fbff !important;
+//         height: 70% !important;
+//         width: 50% !important;
+//         right: 1em !important;
+//         top: 10em !important;
+//         display: block !important;
+//         border-radius: 10px !important;
+//         font-size: large !important;
+//         box-shadow: 0 0 10px rgba(0,0,0,0.3) !important;
+//         z-index: 19 !important;
+//         overflow-y: auto !important;
+//         white-space: normal !important;
+//       }
+//       .embedded-document iframe {
+//         border: none;
+//         border-radius: 8px;
+//         box-shadow: 0 2px 8px rgba(0,0,0,0.15);
+//       }
+//     `;
+//     document.head.appendChild(style);
+//   }
+
+//   // -----------------------------------------------------
+//   // STEP 4 — UI Panel Setup
+//   // -----------------------------------------------------
+//   function createCustomUI() {
+//     if (document.querySelector(".myCustomWrapper")) return;
+
+//     const wrapper = document.createElement("div");
+//     wrapper.className = "myCustomWrapper";
+//     wrapper.innerHTML = "<p>📖 Click a classwork item to view its content and slides.</p>";
+
+//     document.body.appendChild(wrapper);
+//     startObservingListItems(wrapper);
+//   }
+
+//   // -----------------------------------------------------
+//   // STEP 5 — Initialize everything
+//   // -----------------------------------------------------
+//   function initialize() {
+//     console.log("✅ Initializing Classroom Enhancer with Full Slide Controls...");
+//     injectStyles();
+//     createCustomUI();
+//   }
+
+//   setTimeout(initialize, 2000);
+// })();
+
+// v----------------------------------8
+
 (function () {
-  console.log("📘 Classroom UI Enhancer loaded.");
+  console.log("📘 Classroom UI Enhancer loaded with auto-cleanup and reinit.");
 
   // -----------------------------------------------------
   // STEP 1 — Generate embedded HTML for supported documents
@@ -189,65 +413,36 @@
   function getDocumentEmbedHTML(url) {
     if (!url) return "";
 
-    console.log("🔗 Found attachment URL:", url);
-
-    // ✅ Google Slides presentation (use full viewer, not embed)
     if (url.includes("docs.google.com/presentation")) {
       const match = url.match(/\/d\/([^\/]+)\//);
       if (match && match[1]) {
         const presentationId = match[1];
         const viewerURL = `https://docs.google.com/presentation/d/${presentationId}/view?usp=sharing`;
-
-        console.log("🖼 Google Slides Viewer URL:", viewerURL);
         return `
           <div class="embedded-document">
-            <iframe
-              src="${viewerURL}"
-              width="100%"
-              height="480px"
-              allowfullscreen
-              onerror="this.parentElement.innerHTML='<p style=color:red>⚠️ Could not load Google Slides. <a href=${url} target=_blank>Open manually</a></p>'">
-            </iframe>
-           
-          </div>
-        `;
+            <iframe src="${viewerURL}" width="100%" height="480px" allowfullscreen></iframe>
+          </div>`;
       }
     }
 
-    // ✅ Google Drive PPTX (works with preview)
     if (url.includes("drive.google.com/file/")) {
       const match = url.match(/\/d\/([^\/]+)\//);
       if (match && match[1]) {
         const fileId = match[1];
         const previewURL = `https://drive.google.com/file/d/${fileId}/preview`;
-
-        console.log("📊 Google Drive Preview URL:", previewURL);
         return `
           <div class="embedded-document">
-            <iframe
-              src="${previewURL}"
-              width="100%"
-              height="480px"
-              allowfullscreen
-              onerror="this.parentElement.innerHTML='<p style=color:red>⚠️ PPT preview failed. <a href=${url} target=_blank>Open in Drive</a></p>'">
-            </iframe>
-            
-          </div>
-        `;
+            <iframe src="${previewURL}" width="100%" height="480px" allowfullscreen></iframe>
+          </div>`;
       }
     }
 
-    // ✅ PPT/PPTX direct file
     if (url.endsWith(".ppt") || url.endsWith(".pptx")) {
-      console.log("📄 Detected raw PPT file (no embed)");
       return `
         <p>⚠️ Browser cannot embed .pptx directly.</p>
-        <p><a href="${url}" target="_blank">📎 Download PowerPoint File</a></p>
-      `;
+        <p><a href="${url}" target="_blank">📎 Download PowerPoint File</a></p>`;
     }
 
-    // Fallback
-    console.warn("⚠️ Unknown document link:", url);
     return `<p><a href="${url}" target="_blank">📎 View Attachment</a></p>`;
   }
 
@@ -255,8 +450,6 @@
   // STEP 2 — Observe and attach event handlers
   // -----------------------------------------------------
   function startObservingListItems(panel) {
-    console.log("👀 Watching for classwork list items...");
-
     let policy = null;
     if (window.trustedTypes && trustedTypes.createPolicy) {
       policy = trustedTypes.createPolicy("classroomPolicy", { createHTML: (input) => input });
@@ -264,44 +457,26 @@
 
     const attachToListItems = () => {
       const listItems = document.querySelectorAll('li[data-stream-item-id]');
-      if (!listItems.length) {
-        console.warn("⚠️ No list items found yet.");
-        return;
-      }
+      if (!listItems.length) return;
 
       listItems.forEach((item) => {
         if (item.dataset.listenerAttached) return;
         item.dataset.listenerAttached = "true";
 
         item.addEventListener("click", () => {
-          console.log("🖱 Clicked item:", item.dataset.streamItemId);
-
           const contentEl = item.querySelector(".bqKF7d span");
           const htmlContent = contentEl ? contentEl.innerHTML.trim() : "<p>No content found.</p>";
-
           const pptLink = item.querySelector(
             'a[href*=".ppt"], a[href*=".pptx"], a[href*="docs.google.com/presentation"], a[href*="drive.google.com/file"]'
           );
 
-          if (pptLink) {
-            console.log("📘 Found document link:", pptLink.href);
-          } else {
-            console.warn("🚫 No Slides or PPT link found in this item.");
-          }
-
           const embedHTML = pptLink ? getDocumentEmbedHTML(pptLink.href) : "";
-          const fullHTML = `
-            <div style="white-space: normal; line-height: 1.6;">
-              ${htmlContent}
-              ${embedHTML}
-            </div>
-          `;
+          const fullHTML = `<div style="white-space: normal; line-height: 1.6;">${htmlContent}${embedHTML}</div>`;
 
           try {
             if (policy) panel.innerHTML = policy.createHTML(fullHTML);
             else panel.innerHTML = fullHTML;
-          } catch (err) {
-            console.error("❌ TrustedHTML error:", err);
+          } catch {
             panel.innerHTML = `<p>⚠️ Rendering error. Showing raw content.</p>` + fullHTML;
           }
         });
@@ -310,12 +485,11 @@
 
     const observer = new MutationObserver(() => attachToListItems());
     observer.observe(document.body, { childList: true, subtree: true });
-
     attachToListItems();
   }
 
   // -----------------------------------------------------
-  // STEP 3 — Inject CSS (matching native Google Classroom layout)
+  // STEP 3 — Inject CSS
   // -----------------------------------------------------
   function injectStyles() {
     if (document.getElementById("customStyleEnhancer")) return;
@@ -341,18 +515,7 @@
         justify-content: center !important;
       }
       .myCustomWrapper {
-        // position: fixed;
-        // top: 11em;
-        // right: 1em;
-        // width: 50%;
-        // height: 70%;
-        // background: #f9fbff;
-        // border-radius: 10px;
-        // box-shadow: 0 0 10px rgba(0,0,0,0.3);
-        // overflow-y: auto;
-        // padding: 1em;
-        // z-index: 19;
-          padding: 1em !important;
+        padding: 1em !important;
         position: fixed !important;
         background-color: #f9fbff !important;
         height: 70% !important;
@@ -381,23 +544,69 @@
   // -----------------------------------------------------
   function createCustomUI() {
     if (document.querySelector(".myCustomWrapper")) return;
-
     const wrapper = document.createElement("div");
     wrapper.className = "myCustomWrapper";
     wrapper.innerHTML = "<p>📖 Click a classwork item to view its content and slides.</p>";
-
     document.body.appendChild(wrapper);
     startObservingListItems(wrapper);
   }
 
   // -----------------------------------------------------
-  // STEP 5 — Initialize everything
+  // STEP 5 — Cleanup function
   // -----------------------------------------------------
-  function initialize() {
-    console.log("✅ Initializing Classroom Enhancer with Full Slide Controls...");
-    injectStyles();
-    createCustomUI();
+  function cleanupEnhancer() {
+    const wrapper = document.querySelector(".myCustomWrapper");
+    const style = document.getElementById("customStyleEnhancer");
+    if (wrapper) wrapper.remove();
+    if (style) style.remove();
+    console.log("🧹 Classroom Enhancer cleaned up.");
   }
 
-  setTimeout(initialize, 2000);
+  // -----------------------------------------------------
+  // STEP 6 — Initialize enhancer
+  // -----------------------------------------------------
+  function initializeEnhancer() {
+    injectStyles();
+    createCustomUI();
+    console.log("✅ Classroom Enhancer active on /t/all");
+  }
+
+  // -----------------------------------------------------
+  // STEP 7 — URL Watcher (detect page switches)
+  // -----------------------------------------------------
+  function watchURLChanges() {
+    let lastUrl = location.href;
+
+    const observer = new MutationObserver(() => {
+      if (location.href !== lastUrl) {
+        const newUrl = location.href;
+        console.log("🔗 URL changed:", newUrl);
+        lastUrl = newUrl;
+
+        // Remove when leaving /t/all
+        if (!newUrl.endsWith("/t/all")) {
+          cleanupEnhancer();
+        }
+
+        // Reinit when coming back to /t/all
+        else if (newUrl.endsWith("/t/all")) {
+          console.log("♻️ Reinitializing enhancer for /t/all");
+          setTimeout(() => initializeEnhancer(), 1000);
+        }
+      }
+    });
+
+    observer.observe(document.body, { childList: true, subtree: true });
+  }
+
+  // -----------------------------------------------------
+  // STEP 8 — Boot
+  // -----------------------------------------------------
+  function boot() {
+    console.log("🚀 Classroom Enhancer booting...");
+    if (location.href.endsWith("/t/all")) initializeEnhancer();
+    watchURLChanges();
+  }
+
+  setTimeout(boot, 2000);
 })();
