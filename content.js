@@ -467,7 +467,7 @@
 
         item.addEventListener("click", () => {
           const contentEl = item.querySelector(".bqKF7d span");
-          const htmlContent = contentEl ? contentEl.innerHTML.trim() : "<p>No content found.</p>";
+          const htmlContent = contentEl ? contentEl.innerHTML.trim() : "<p>No content found. Refresh the page.</p>";
           const pptLink = item.querySelector(
             'a[href*=".ppt"], a[href*=".pptx"], a[href*="docs.google.com/presentation"], a[href*="drive.google.com/file"]'
           );
@@ -585,7 +585,7 @@ const topicHeaderHTML = `
     if (document.querySelector(".myCustomWrapper")) return;
     const wrapper = document.createElement("div");
     wrapper.className = "myCustomWrapper";
-    wrapper.innerHTML = "<p>📖 Click a classwork item to view its content and slides.</p>";
+    wrapper.innerHTML = "<p>📖 Double Click a classwork item to view its content and slides.</p>";
     document.body.appendChild(wrapper);
     startObservingListItems(wrapper);
   }
