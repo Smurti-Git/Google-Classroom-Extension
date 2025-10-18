@@ -1,9 +1,14 @@
 {
   "manifest_version": 3,
-  "name": "Google Classroom UI Enhancer",
+  "name": "ClassCrux",
   "version": "1.0",
   "description": "Adds a custom panel and UI to Google Classroom pages.",
   "permissions": ["activeTab", "scripting"],
+    "icons": {
+    "16": "icon16.png",
+    "48": "icon48.png",
+    "128": "icon128.png"
+  },
   "content_scripts": [
     {
       "matches": ["https://classroom.google.com/*"],
