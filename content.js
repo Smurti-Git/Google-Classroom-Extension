@@ -256,49 +256,6 @@
   // -----------------------------------------------------
   // STEP 1 — Generate embedded HTML for supported documents
   // -----------------------------------------------------
-  // function getDocumentEmbedHTML(url) {
-  //   if (!url) return "";
-
-  //   if (url.includes("docs.google.com/presentation")) {
-  //     const match = url.match(/\/d\/([^\/]+)\//);
-  //     if (match && match[1]) {
-  //       const presentationId = match[1];
-  //       const viewerURL = `https://docs.google.com/presentation/d/${presentationId}/view?usp=sharing`;
-  //       return `
-  //         <div class="embedded-document">
-  //           <iframe src="${viewerURL}" width="100%" height="480px" allowfullscreen></iframe>
-  //         </div>`;
-  //     }
-  //   }
-
-  //   if (url.includes("docs.google.com/forms")) {
-  //     const embedLink = url.includes("embedded=true") ? url : url + "?embedded=true";
-  //     return `
-  //       <div class="embedded-document">
-  //         <iframe src="${embedLink}" width="100%" height="600px" allowfullscreen></iframe>
-  //       </div>`;
-  //   }
-
-  //   if (url.includes("drive.google.com/file/")) {
-  //     const match = url.match(/\/d\/([^\/]+)\//);
-  //     if (match && match[1]) {
-  //       const fileId = match[1];
-  //       const previewURL = `https://drive.google.com/file/d/${fileId}/preview`;
-  //       return `
-  //         <div class="embedded-document">
-  //           <iframe src="${previewURL}" width="100%" height="480px" allowfullscreen></iframe>
-  //         </div>`;
-  //     }
-  //   }
-
-  //   if (url.endsWith(".ppt") || url.endsWith(".pptx")) {
-  //     return `
-  //       <p>⚠️ Browser cannot embed .pptx directly.</p>
-  //       <p><a href="${url}" target="_blank">📎 Download PowerPoint File</a></p>`;
-  //   }
-
-  //   return `<p><a href="${url}" target="_blank">📎 View Attachment</a></p>`;
-  // }
 
  function getDocumentEmbedHTML(url) {
   if (!url) return "";
@@ -458,53 +415,121 @@
   // -----------------------------------------------------
   // STEP 3 — Inject CSS
   // -----------------------------------------------------
-  function injectStyles() {
-    if (document.getElementById("customStyleEnhancer")) return;
-    const style = document.createElement("style");
-    style.id = "customStyleEnhancer";
-    style.textContent = `
-      .kdAl3b {
-        position: absolute !important;
-        left: 1em !important;
-        width: 28% !important;
-        z-index: 1;
-      }
-      .JryN0e.jlxRme {
-        display: inline !important;
-        width: 25% !important;
-        position: fixed !important;
-        bottom: 1em !important;
-        z-index: 3 !important;
-      }
-      .iCujF {
-        display: block !important;
-        position: relative !important;
-        justify-content: center !important;
-      }
-      .myCustomWrapper {
-        padding: 1em !important;
-        position: fixed !important;
-        background-color: #f9fbff !important;
-        height: 72% !important;
-        width: 53% !important;
-        right: 1em !important;
-        top: 9em !important;
-        display: block !important;
-        border-radius: 10px !important;
-        font-size: large !important;
-        box-shadow: 0 0 10px rgba(0,0,0,0.3) !important;
-        z-index: 19 !important;
-        overflow-y: auto !important;
-        white-space: normal !important;
-      }
-      .embedded-document iframe {
-        border: none;
-        border-radius: 8px;
-        box-shadow: 0 2px 8px rgba(0,0,0,0.15);
-      }
-    `;
-    document.head.appendChild(style);
-  }
+  // function injectStyles() {
+  //   if (document.getElementById("customStyleEnhancer")) return;
+  //   const style = document.createElement("style");
+  //   style.id = "customStyleEnhancer";
+  //   style.textContent = `
+  //     .kdAl3b {
+  //       position: absolute !important;
+  //       left: 1em !important;
+  //       width: 28% !important;
+  //       z-index: 1;
+  //     }
+  //     .JryN0e.jlxRme {
+  //       display: inline !important;
+  //       width: 25% !important;
+  //       position: fixed !important;
+  //       bottom: 1em !important;
+  //       z-index: 3 !important;
+  //     }
+  //     .iCujF {
+  //       display: block !important;
+  //       position: relative !important;
+  //       justify-content: center !important;
+  //     }
+  //     .myCustomWrapper {
+  //       padding: 1em !important;
+  //       position: fixed !important;
+  //       background-color: #f9fbff !important;
+  //       height: 72% !important;
+  //       width: 53% !important;
+  //       right: 1em !important;
+  //       top: 9em !important;
+  //       display: block !important;
+  //       border-radius: 10px !important;
+  //       font-size: large !important;
+  //       box-shadow: 0 0 10px rgba(0,0,0,0.3) !important;
+  //       z-index: 19 !important;
+  //       overflow-y: auto !important;
+  //       white-space: normal !important;
+  //     }
+  //     .embedded-document iframe {
+  //       border: none;
+  //       border-radius: 8px;
+  //       box-shadow: 0 2px 8px rgba(0,0,0,0.15);
+  //     }
+  //   `;
+  //   document.head.appendChild(style);
+  // }
+
+
+function injectStyles() {
+  if (document.getElementById("customStyleEnhancer")) return;
+  const style = document.createElement("style");
+  style.id = "customStyleEnhancer";
+  style.textContent = `
+    .kdAl3b {
+      position: absolute !important;
+      left: 1em !important;
+      width: 28% !important;
+      z-index: 1;
+    }
+    .JryN0e.jlxRme {
+      display: inline !important;
+      width: 25% !important;
+      position: fixed !important;
+      bottom: 1em !important;
+      z-index: 3 !important;
+    }
+    .iCujF {
+      display: block !important;
+      position: relative !important;
+      justify-content: center !important;
+    }
+    .myCustomWrapper {
+      padding: 1em !important;
+      position: fixed !important;
+      background-color: #f9fbff !important;
+      height: 72% !important;
+      width: 53% !important;
+      right: 1em !important;
+      top: 9em !important;
+      display: block !important;
+      border-radius: 10px !important;
+      font-size: large !important;
+      box-shadow: 0 0 10px rgba(0,0,0,0.3) !important;
+      z-index: 19 !important;
+      overflow-y: auto !important;
+      white-space: normal !important;
+    }
+    .embedded-document iframe {
+      border: none;
+      border-radius: 8px;
+      box-shadow: 0 2px 8px rgba(0,0,0,0.15);
+    }
+    .myCustomWrapper ul, .myCustomWrapper ol {
+      padding-left: 1.5em;
+      margin-bottom: 1em;
+    }
+    .myCustomWrapper li {
+      margin-bottom: 0.5em;
+      list-style-type: disc;
+    }
+    .myCustomWrapper ol li {
+      list-style-type: decimal;
+    }
+    .myCustomWrapper h2, .myCustomWrapper h3 {
+      color: #1967d2;
+      margin-top: 1em;
+      margin-bottom: 0.5em;
+    }
+    .myCustomWrapper p {
+      margin-bottom: 1em;
+    }
+  `;
+  document.head.appendChild(style);
+}
 
   // -----------------------------------------------------
   // STEP 4 — UI Panel Setup
@@ -512,8 +537,16 @@
   function createCustomUI() {
     if (document.querySelector(".myCustomWrapper")) return;
     const wrapper = document.createElement("div");
+    const imageURL = chrome.runtime.getURL("demoimg.png");
     wrapper.className = "myCustomWrapper";
-    wrapper.innerHTML = "<p>📖 Double Click a classwork item to view its content and slides or forms. If not found <b>Refresh</b> the page.</p>";
+    // wrapper.innerHTML = `<p>📖 Double Click a classwork item to view its content and slides or forms. If not found <b>Refresh</b> the page.</p>
+    // <img src="demoimg.png" alt="Demo Preview" style="width:100%; max-width:500px; margin-top:10px; border-radius:8px; box-shadow:0 2px 8px rgba(0,0,0,0.15);" />`;
+    
+
+wrapper.innerHTML = `
+  <p>📖 Double Click a classwork item to view its content and slides or forms. If not found <b>Refresh</b> the page.</p>
+  <img src="${imageURL}" alt="Demo Preview" style="width:100%; max-width:500px; margin-top:10px; border-radius:8px; box-shadow:0 2px 8px rgba(0,0,0,0.15);" />
+`;
     document.body.appendChild(wrapper);
     startObservingListItems(wrapper);
   }

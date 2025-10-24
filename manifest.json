@@ -18,7 +18,9 @@
   ],
   "web_accessible_resources": [
     {
-      "resources": ["scripts/custom.js"],
+      "resources": ["scripts/custom.js",
+    "demoimg.png"
+],
       "matches": ["https://classroom.google.com/*"]
     }
   ]
