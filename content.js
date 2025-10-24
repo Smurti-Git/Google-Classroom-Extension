@@ -323,6 +323,13 @@
       </div>`;
   }
 
+    if (url.includes("flexiquiz.com/SC/")) {
+    return `
+      <div class="embedded-document">
+        <iframe src="${url}" width="100%" height="600px" allowfullscreen></iframe>
+      </div>`;
+  }
+
   if (url.includes("docs.google.com/document")) {
     const match = url.match(/\/d\/([^\/]+)\//);
     if (match && match[1]) {
@@ -331,6 +338,18 @@
       return `
         <div class="embedded-document">
           <iframe src="${previewURL}" width="100%" height="600px" allowfullscreen></iframe>
+        </div>`;
+    }
+  }
+
+  if (url.includes("docs.google.com/spreadsheets")) {
+    const match = url.match(/\/d\/([^\/]+)\//);
+    if (match && match[1]) {
+      const sheetId = match[1];
+      const embedURL = `https://docs.google.com/spreadsheets/d/${sheetId}/preview`;
+      return `
+        <div class="embedded-document">
+          <iframe src="${embedURL}" width="100%" height="600px" allowfullscreen></iframe>
         </div>`;
     }
   }
@@ -377,9 +396,13 @@
           const contentEl = item.querySelector(".bqKF7d span");
           const htmlContent = contentEl ? contentEl.innerHTML.trim() : "<p>No content found. <b>Click Again,</b> </p>";
 
+          // const linkEl = item.querySelector(
+          //   'a[href*=".ppt"], a[href*=".pptx"], a[href*="docs.google.com/presentation"], a[href*="docs.google.com/forms"], a[href*="drive.google.com/file"]'
+          // );
+
           const linkEl = item.querySelector(
-            'a[href*=".ppt"], a[href*=".pptx"], a[href*="docs.google.com/presentation"], a[href*="docs.google.com/forms"], a[href*="drive.google.com/file"]'
-          );
+  'a[href*=".ppt"], a[href*=".pptx"], a[href*="docs.google.com/presentation"], a[href*="docs.google.com/forms"], a[href*="drive.google.com/file"], a[href*="docs.google.com/document"], a[href*="docs.google.com/spreadsheets"], a[href*="flexiquiz.com/SC/"]'
+);
 
           const embedHTML = linkEl ? getDocumentEmbedHTML(linkEl.href) : "";
 
@@ -462,10 +485,10 @@
         padding: 1em !important;
         position: fixed !important;
         background-color: #f9fbff !important;
-        height: 70% !important;
-        width: 50% !important;
+        height: 72% !important;
+        width: 53% !important;
         right: 1em !important;
-        top: 10em !important;
+        top: 9em !important;
         display: block !important;
         border-radius: 10px !important;
         font-size: large !important;
