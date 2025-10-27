@@ -399,4 +399,3 @@ setTimeout(() => startObservingListItems(wrapper), 1500);
   setTimeout(boot, 2000);
 })();
 
-console.log("Hello")
